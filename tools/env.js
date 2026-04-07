@@ -11,8 +11,18 @@ function Env(t, s) {
             this.startTime = new Date().getTime();
             Object.assign(this, s);
             this.log(`\ud83d\udd14${this.name},\u5f00\u59cb!`);
-            this.bucket = ''
+            this.bucket = this.bucket || ''
             this.fs = require("fs");
+            if (this.isNode() && this.bucket) {
+                try {
+                    if (!this.fs.existsSync(this.bucket)) {
+                        this.fs.writeFileSync(this.bucket, JSON.stringify({}, null, 2));
+                        this.log(`📁 已创建 bucket 文件: ${this.bucket}`);
+                    }
+                } catch (e) {
+                    this.log("❌ 初始化 bucket 失败: " + e.message);
+                }
+            }
         }
         async get(key, def = null) {
             if (!this.isNode()) return def;
