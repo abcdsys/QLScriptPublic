@@ -94,14 +94,14 @@ class Task {
             result = result.replaceAll(")", "")
             result = JSON.parse(result)
             if (result.code = "0") {
-                await this.user_info(result.result.signDayVo.signinId)
+                await this.sign(result.result.signDayVo.signinId)
             }
 
         } catch (e) {
             console.log(e);
         }
     }
-    async user_info(signInId) {
+    async sign(signInId) {
         let callbackStr = new Date().getTime()
         const time = this.getTime()
         const str = `ddky.promotion.signin.sign` + `channelH5` + `laterSignType1` + `loginToken${this.token}` + `methodddky.promotion.signin.sign` +
@@ -114,7 +114,13 @@ class Task {
                 headers: {},
             }
             let { data: response } = await axios.request(options);
-            console.log(response);
+            let result = response.replace(`Zepto${callbackStr}`, "")
+            result = result.replaceAll("(", "")
+            result = result.replaceAll(")", "")
+            result = JSON.parse(result)
+            if (result.code = "0") {
+                $.log(`签到横杠`)
+            }
         } catch (e) {
             console.log(e);
         }
@@ -140,19 +146,19 @@ class Task {
     .finally(() => $.done());
 
 async function getNotice() {
-	try {
-		let options = {
-			url: `https://ghproxy.net/https://raw.githubusercontent.com/smallfawn/Note/refs/heads/main/Notice.json`,
-			headers: {
-				"User-Agent": defaultUserAgent,
-			},
-            timeout:3000
-		}
-		let {
-			data: res
-		} = await axios.request(options);
-		$.log(res)
-		return res
-	} catch (e) {}
+    try {
+        let options = {
+            url: `https://ghproxy.net/https://raw.githubusercontent.com/smallfawn/Note/refs/heads/main/Notice.json`,
+            headers: {
+                "User-Agent": defaultUserAgent,
+            },
+            timeout: 3000
+        }
+        let {
+            data: res
+        } = await axios.request(options);
+        $.log(res)
+        return res
+    } catch (e) { }
 
 }
