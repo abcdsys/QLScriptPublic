@@ -54,15 +54,14 @@ class Task {
 			, d = {},
 			l = "R6WbJ830wNsEdjH9GumwKYiYxHz0K9QD",
 			n = (new Date).getTime(),
-			n = '1775622877751'
-		d = "post" === options.method || "POST" === options.method ? {
-			body: JSON.stringify(options.data),
-			secretKey: l,
-			ts: n
-		} : Object.assign({}, options.params, {
-			secretKey: l,
-			ts: n
-		}),
+			d = "post" === options.method || "POST" === options.method ? {
+				body: JSON.stringify(options.data),
+				secretKey: l,
+				ts: n
+			} : Object.assign({}, options.params, {
+				secretKey: l,
+				ts: n
+			}),
 			sign = this.sha1(function (e) {
 				var t, a = [];
 				for (t in e) {
@@ -77,6 +76,7 @@ class Task {
 				)),
 					u
 			}(d))
+		console.log()
 		let baseHeaders = {
 			host: "mall-mobile-v6.vecrp.com",
 			"accept": "*/*",
@@ -96,6 +96,7 @@ class Task {
 			"Referer": "https://servicewechat.com/wxda948f3be0afc375/65/page-frame.html",
 		}
 		options.headers = Object.assign(options.headers, baseHeaders)
+
 		return axios.request(options)
 	}
 	async signIn() {
@@ -107,15 +108,13 @@ class Task {
 			data: {
 				activityId: 'cdd30467-abb8-4944-8941-2879aa950a86',
 				shopId: '100186753',
-				signDate: new Date,
-				mtParticipateId: ''
+				signDate: $.time(`yyyy-M-dd`),
 			}
 
 		};
 		let {
 			data: result
 		} = await this.request(options);
-
 		if (result?.success) {
 			//打印签到结果
 			$.log(`🌸账号[${this.index}]` + `签到成功`);
