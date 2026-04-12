@@ -53,7 +53,13 @@
 | 立乐家会员俱乐部 | 2026-04-08 13:57:03 | ✅ |
 | 益禾堂 | 2026-04-12 14:09:41 | ✅ |
 <!-- README_TABLE_END -->
+## 微信小程序脚本 需要wechat code server 
 
+| 脚本名称 | 更新时间 | 状态 |
+| --- | --- | --- |
+<!-- WXAPP_TABLE_START -->
+
+<!-- WXAPP_TABLE_END -->
 # 青龙面板拉库命令
 
 `ql repo https://github.com/smallfawn/QLScriptPublic.git backup main`
