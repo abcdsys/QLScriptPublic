@@ -58,7 +58,7 @@ class Task {
 
 
         await this.getUserInfo()
-        if (!this.isSign) await this.doSign()
+         await this.doSign()
     }
     async getUserToken(code) {
         let data = ({
