@@ -7,7 +7,8 @@ cron: 30 9 * * *
 ------------------------------------------
 #Notice:   
 臭宝乐园 微信小程序 签到得积分 换螺蛳粉
-抓https://cb-bags-slb.weinian.com.cn 请求头token 多账户&或换行.
+抓https://cb-bags-slb.weinian.com.cn 请求头token 仅支持单账号
+WeChatCodeServer 填写wx_server_url wx_auth 用于获取code 因为抓到的有效期很短只有2小时
 变量名称：choubaoleyuan
 ⚠️【免责声明】
 ------------------------------------------
@@ -24,24 +25,65 @@ const {
     Env
 } = require("../tools/env")
 const $ = new Env("臭宝乐园");
+const WeChatCodeServer = require("wechat-mini-server");
 let ckName = `choubaoleyuan`;
 const strSplitor = "#";
+
 const axios = require("axios");
 const defaultUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001e31) NetType/WIFI Language/zh_CN miniProgram"
+let wechat = new WeChatCodeServer({
+    url: process.env.wx_server_url || 'http://192.168.31.196:12081',
+    appid: 'wx2206cca563f6f937',
+    auth: process.env.wx_auth || "your-api-key",
 
+}
+);
 
 class Task {
     constructor(env) {
         this.index = $.userIdx++
         this.user = env.split(strSplitor);
-        this.token = this.user[0];
-
+        this.token = this.user[0]
     }
 
     async run() {
+        let { data: codeRes } = await wechat.GetMiniCode()
+        if (codeRes.status) {
+            await this.getUserToken(codeRes.data)
+        }
+        if (!this.token) {
+            $.log(`账号[${this.index}] 获取用户Token失败❌`)
+            return
+        }
+        this.token = 'Bearer' + this.token
         await this.getUserInfo()
         await this.track()
         await this.checkSign()
+    }
+    async getUserToken(code) {
+        let options = {
+            method: 'POST',
+            url: `https://cb-bags-slb.weinian.com.cn/bff/v1/auth/wechatLogin`,
+            headers: {
+                "accept": "*/*",
+                "accept-language": "zh-CN,zh;q=0.9",
+                "content-type": "application/json",
+                "authorization": "Bearer" + this.token
+            }
+            ,
+            data: {
+                loginCode: code
+            }
+        }
+        let {
+            data: result
+        } = await axios.request(options);
+        if (result?.status == '200') {
+            this.token = result.data
+            $.log(`🌸账号[${this.index}] 获取用户Token成功:${this.token}`)
+        } else {
+            $.log(`🌸账号[${this.index}] 获取用户Token-失败:${result.msg}❌`)
+        }
     }
     async getUserInfo() {
         let options = {
